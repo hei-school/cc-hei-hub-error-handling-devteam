@@ -1,3 +1,6 @@
+from exceptions import FilenameInvalid, NotAuthorized
+
+
 class Cloud:
     def __init__(self, cloud_name):
         self.cloud_name = cloud_name
@@ -23,7 +26,11 @@ class Cloud:
         }
 
     def upload_file(self, folder_name, file, file_size):
-        pass
+        if not self.is_valid_path(folder_name):
+            raise NotAuthorized()
+
+        if not self.is_valid_format(folder_name, file):
+            raise FilenameInvalid(f"Invalid filename '{file}' for folder '{folder_name}'")
 
     def read_file(self, folder_name, filename):
         pass
@@ -33,6 +40,15 @@ class Cloud:
 
     def delete_file(self, folder_name, filename):
         pass
+
+    def is_valid_format(self, folder_name, file):
+        folder = self.folders.get(folder_name).get('format', [])
+        file_format = file.split('.')[-1].lower()
+        return file_format in folder
+
+    def is_valid_path(self, folder_name):
+        folder = self.folders.get(folder_name)
+        return folder
 
 
 def main():
