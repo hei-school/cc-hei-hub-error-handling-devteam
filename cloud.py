@@ -1,11 +1,11 @@
-from exceptions import FilenameInvalid, NotAuthorized
+from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile
 
 
 class Cloud:
     def __init__(self, cloud_name):
         self.cloud_name = cloud_name
-        self.filesize_limit_upload = 10,  # MB UNIT
-        self.folder_size_limit = 10000,  # MB UNIT
+        self.filesize_limit_upload = 10  # MB UNIT
+        self.folder_size_limit = 10000  # MB UNIT
         self.folders = {
             'images': {
                 'files': {},
@@ -31,6 +31,9 @@ class Cloud:
 
         if not self.is_valid_format(folder_name, file):
             raise FilenameInvalid(f"Invalid filename '{file}' for folder '{folder_name}'")
+        
+        if file_size > self.filesize_limit_upload:
+            raise TooLargeFile()
 
     def read_file(self, folder_name, filename):
         pass
@@ -49,7 +52,7 @@ class Cloud:
     def is_valid_path(self, folder_name):
         folder = self.folders.get(folder_name)
         return folder
-
+    
 
 def main():
     hei_cloud = Cloud("HeiCloud")
@@ -68,7 +71,8 @@ def main():
             folder_name = input("Enter the folder name (images, videos, pdf, docs): ")
             file = input("Enter file content: ")
             size = input("Enter the size: ")
-            hei_cloud.upload_file(folder_name, file, size)
+            size_int = int(size)
+            hei_cloud.upload_file(folder_name, file, size_int)
         elif choice == '2':
             folder_name = input("Enter the folder name (images, videos, pdf, docs): ")
             file = input("Enter filename: ")
