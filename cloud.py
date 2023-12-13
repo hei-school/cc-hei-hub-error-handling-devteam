@@ -1,4 +1,4 @@
-from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile
+from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, DuplicatedFile, CorruptedFile, LockException
 
 
 class Cloud:
@@ -6,6 +6,7 @@ class Cloud:
         self.cloud_name = cloud_name
         self.filesize_limit_upload = 10  # MB UNIT
         self.folder_size_limit = 10000  # MB UNIT
+        self.deletion_locked = True
         self.folders = {
             'images': {
                 'files': {},
@@ -35,6 +36,17 @@ class Cloud:
         if file_size > self.filesize_limit_upload:
             raise TooLargeFile()
 
+        existing_files = self.folders.get(folder_name).get('files', {})
+
+        if file in existing_files:
+            raise DuplicatedFile(f"File '{file}' already exists in folder '{folder_name}'")
+
+        self.folders[folder_name]['files'][file] = {'size': file_size}
+
+        if "corrupted" in file.lower():
+            raise CorruptedFile(f"File '{file}' is corrupted")
+        self.folders[folder_name]['files'][file] = {'size': file_size}
+
     def read_file(self, folder_name, filename):
         pass
 
@@ -42,7 +54,19 @@ class Cloud:
         pass
 
     def delete_file(self, folder_name, filename):
-        pass
+        if not self.is_valid_path(folder_name):
+            raise NotAuthorized()
+
+        if self.deletion_locked:
+            raise LockException()
+
+        existing_files = self.folders.get(folder_name).get('files', {})
+
+        if filename not in existing_files:
+            print(f"File '{filename}' not found in folder '{folder_name}'")
+
+        del self.folders[folder_name]['files'][filename]
+        print(f"File '{filename}' deleted from folder '{folder_name}'")
 
     def is_valid_format(self, folder_name, file):
         folder = self.folders.get(folder_name).get('format', [])
@@ -69,7 +93,7 @@ def main():
 
         if choice == '1':
             folder_name = input("Enter the folder name (images, videos, pdf, docs): ")
-            file = input("Enter file content: ")
+            file = input("Enter file name: ")
             size = input("Enter the size: ")
             size_int = int(size)
             hei_cloud.upload_file(folder_name, file, size_int)
