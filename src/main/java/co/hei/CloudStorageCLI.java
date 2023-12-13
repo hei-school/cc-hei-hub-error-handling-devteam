@@ -8,6 +8,8 @@ import co.hei.exceptions.DuplicateFileException;
 import co.hei.exceptions.InsufficientSpaceDiskException;
 import co.hei.exceptions.NotFoundException;
 import co.hei.exceptions.TooLargeFileSizeException;
+import co.hei.exceptions.CorruptedFileException;
+import co.hei.exceptions.LockException;
 import co.hei.utilities.Ui;
 import co.hei.utilities.RandomNumber;
 import java.io.IOException;
@@ -51,8 +53,6 @@ class CloudStorageCLI {
                     System.exit(0);
                 default:
                     System.out.println("Invalid choice. Please try again.");
-            }
-        }
     }
 
     private static void uploadFile(Scanner scanner) {
@@ -68,6 +68,9 @@ class CloudStorageCLI {
         String fileName = scanner.nextLine();
 
         try {
+            if (fileName.toLowerCase().contains("corrupt")) {
+                throw new CorruptedFileException("it is a corrupted file");
+            }
             validateFile(filePath, selectedFolder, fileTypeChoice);
             RandomNumber.generateAndCheck();
             selectedFolder.put(fileName, filePath);
@@ -132,6 +135,8 @@ class CloudStorageCLI {
         }
     }
 
+
+
     private static void validateFile(String filePath, Map<String, String> selectedFolder, int fileType)
             throws IOException, NotFoundException, TooLargeFileSizeException, InsufficientSpaceDiskException, DuplicateFileException {
         Path file = Paths.get(filePath);
@@ -159,6 +164,37 @@ class CloudStorageCLI {
         }
 
         currentStorageSize += (int) fileSize;
+    }
+
+    private static void deleteFile(Scanner scanner) {
+        Ui.showFileTypes("delete");
+        int fileTypeChoice = scanner.nextInt();
+        scanner.nextLine();
+
+        Map<String, String> selectedFolder = getFolderByType(fileTypeChoice);
+
+        System.out.print("Enter the file name: ");
+        String fileName = scanner.nextLine();
+
+        try {
+            validateDelete(selectedFolder, fileName);
+            selectedFolder.remove(fileName);
+            System.out.println("File deleted successfully!");
+        } catch (LockException e) {
+            System.out.println("\n" + e);
+        } catch (NotFoundException e) {
+            System.out.println("\n" + e);
+        }
+    }
+
+
+    private static void validateDelete(Map<String, String> selectedFolder, String fileName)
+            throws NotFoundException, LockException {
+        if (!selectedFolder.containsKey(fileName)) {
+            throw new NotFoundException("Error: File not found.");
+        }
+
+        throw new LockException("Error: Deletion is locked.");
     }
 
     private static Map<String, String> getFolderByType(int fileTypeChoice) {
