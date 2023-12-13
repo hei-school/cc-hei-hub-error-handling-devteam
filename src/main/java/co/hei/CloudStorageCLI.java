@@ -20,10 +20,27 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import static co.hei.utilities.FileTypeChecker.isValidFileType;
 
 class CloudStorageCLI {
+    private static FileHandler fileHandler;
+
+    static {
+        try {
+            fileHandler = new FileHandler("logs.txt");
+            SimpleFormatter formatter = new SimpleFormatter();
+            fileHandler.setFormatter(formatter);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    ;
+    SimpleFormatter formatter = new SimpleFormatter();
     private static final int MAX_STORAGE_SIZE_MB = 10;
     private static int currentStorageSize = 0;
     private final static Map<String, String> imagesFolder = new HashMap<>();
@@ -31,31 +48,40 @@ class CloudStorageCLI {
     private final static Map<String, String> pdfFolder = new HashMap<>();
     private final static Map<String, String> docsFolder = new HashMap<>();
 
+    CloudStorageCLI() throws IOException {
+    }
+
     public static void handler() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            Ui.showMenu();
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            try {
+                Ui.showMenu();
+                int choice = scanner.nextInt();
+                scanner.nextLine();
 
-            switch (choice) {
-                case 1:
-                    uploadFile(scanner);
-                    break;
-                case 2:
-                    downloadFile(scanner);
-                    break;
-                case 3:
-                    listFiles();
-                    break;
-                case 4:
-                    deleteFile(scanner);
-                    break;
-                case 5:
-                    System.out.println("Exiting...");
-                    System.exit(0);
-                default:
-                    System.out.println("Invalid choice. Please try again.");
+                switch (choice) {
+                    case 1:
+                        uploadFile(scanner);
+                        break;
+                    case 2:
+                        downloadFile(scanner);
+                        break;
+                    case 3:
+                        listFiles();
+                        break;
+                    case 4:
+                        deleteFile(scanner);
+                        break;
+                    case 5:
+                        System.out.println("Exiting...");
+                        System.exit(0);
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                }
+            } catch (RuntimeException e){
+                Logger logger = Logger.getLogger("MyLog");
+                logger.addHandler(fileHandler);
+                logger.info(e.toString());
             }
         }
     }
@@ -87,6 +113,9 @@ class CloudStorageCLI {
         } catch (ServerDownException e) {
             System.out.println("Error ServerDown: " + e.getMessage());
         } catch (Exception e) {
+            Logger logger = Logger.getLogger("MyLog");
+            logger.addHandler(fileHandler);
+            logger.info(e.toString());
             System.out.println("Error: " + e.getMessage());
         }
     }
@@ -117,6 +146,9 @@ class CloudStorageCLI {
         } catch (ServerDownException e) {
             System.out.println("Error ServerDown: " + e.getMessage());
         } catch (Exception e) {
+            Logger logger = Logger.getLogger("MyLog");
+            logger.addHandler(fileHandler);
+            logger.info(e.toString());
             System.out.println("Error: " + e.getMessage());
         }
 
