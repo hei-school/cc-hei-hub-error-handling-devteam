@@ -39,8 +39,6 @@ class CloudStorageCLI {
         }
     }
 
-    ;
-    SimpleFormatter formatter = new SimpleFormatter();
     private static final int MAX_STORAGE_SIZE_MB = 10;
     private static int currentStorageSize = 0;
     private final static Map<String, String> imagesFolder = new HashMap<>();
