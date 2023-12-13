@@ -1,10 +1,7 @@
 package co.hei;
 
 
-import co.hei.exceptions.DuplicateFileException;
-import co.hei.exceptions.InsufficientSpaceDiskException;
-import co.hei.exceptions.NotFoundException;
-import co.hei.exceptions.TooLargeFileSizeException;
+import co.hei.exceptions.*;
 import co.hei.utilities.RandomNumberGenerator;
 
 import java.io.IOException;
@@ -78,6 +75,10 @@ class CloudStorageCLI {
             validateFile(filePath, selectedFolder, fileTypeChoice);
             selectedFolder.put(fileName, filePath);
             System.out.println("File uploaded successfully!");
+        } catch (NotImplementedException e){
+            System.out.println("Error : "+ e.getMessage());
+        } catch (ServerErrorException e){
+            System.out.println("Error :"+ e.getMessage());
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -98,11 +99,18 @@ class CloudStorageCLI {
         System.out.print("Enter the file name: ");
         String fileName = scanner.nextLine();
 
-        if (selectedFolder.containsKey(fileName)) {
-            String filePath = selectedFolder.get(fileName);
-            System.out.println("Downloading file from: " + filePath);
-        } else {
-            System.out.println("Error: File not found.");
+        try {
+            RandomNumberGenerator.generateAndCheck();
+            if (selectedFolder.containsKey(fileName)) {
+                String filePath = selectedFolder.get(fileName);
+                System.out.println("Downloading file from: " + filePath);
+            } else {
+                System.out.println("Error: File not found.");
+            }
+        }catch (NotImplementedException e){
+            System.out.println("Error : "+ e.getMessage());
+        }catch (ServerErrorException e){
+            System.out.println("Error :"+ e.getMessage());
         }
     }
 
