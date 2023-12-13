@@ -1,6 +1,10 @@
+
+from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, NotImplemented,ServerError
+
 from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, DuplicatedFile, CorruptedFile, LockException, \
     SensitiveFile
 from exceptions import TooManyRequests, RequestTimeout, ServerDown
+
 from randomNumber import RandomNumberGenerator
 
 
@@ -31,6 +35,7 @@ class Cloud:
         }
 
     def upload_file(self, folder_name, file, file_size):
+
         if not self.is_valid_path(folder_name):
             raise NotAuthorized()
 
@@ -42,6 +47,12 @@ class Cloud:
 
         try:
             RandomNumberGenerator.generate_and_check()
+
+        except NotImplemented as e:
+            print(f"Error : {e}")
+        except ServerError as e:
+            print(f"Error : {e}")
+
         except TooManyRequests as e:
             print(f"Erreur TooManyRequests : {e}")
         except RequestTimeout as e:
@@ -60,8 +71,31 @@ class Cloud:
             raise CorruptedFile(f"File '{file}' is corrupted")
         self.folders[folder_name]['files'][file] = {'size': file_size}
 
+
     def read_file(self, folder_name, filename):
-        pass
+        try:
+            RandomNumberGenerator.generate_and_check()
+        except NotImplemented as e:
+            print(f"Error : {e}")
+        except ServerError as e:
+            print(f"Error : {e}")
+
+    def download_file(self, folder_name, filename):
+        try:
+            RandomNumberGenerator.generate_and_check()
+        except NotImplemented as e:
+            print(f"Error : {e}")
+        except ServerError as e:
+            print(f"Error : {e}")
+
+    def delete_file(self, folder_name, filename):
+        try:
+            RandomNumberGenerator.generate_and_check()
+        except NotImplemented as e:
+            print(f"Error : {e}")
+        except ServerError as e:
+            print(f"Error : {e}")
+        
 
     def download_file(self, folder_name, file):
         try:
