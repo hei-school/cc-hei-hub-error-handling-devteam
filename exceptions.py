@@ -11,14 +11,21 @@ class NotAuthorized(Exception):
         self.message = message
         super().__init__(self.status_code, self.message)
 
+
 class TooLargeFile(Exception):
     def __init__(self, code=423, message="File size exceeds 10 MB"):
         self.status_code = code
         self.message = message
         super().__init__(self.status_code, self.message)
 
+
 class NotImplemented(Exception):
     def __init__(self, code=501, message="This operation is not implemented"):
+
+
+class TooManyRequests(Exception):
+    def __init__(self, code=429, message="Too many requests in a short period of time"):
+
         self.status_code = code
         self.message = message
         super().__init__(self.status_code, self.message)
@@ -28,3 +35,45 @@ class ServerError(Exception):
         self.status_code = code
         self.message = message
         super().__init__(self.status_code, self.message)
+
+
+class RequestTimeout(Exception):
+    def __init__(self, code=408, message="The request has expired"):
+        self.status_code = code
+        self.message = message
+        super().__init__(self.status_code, self.message)
+
+
+class DuplicatedFile(Exception):
+    def __init__(self, message="Duplicated file"):
+        self.message = message
+        super().__init__(self.message)
+
+
+class CorruptedFile(Exception):
+    def __init__(self, code=500, message="The file is corrupted"):
+        self.status_code = code
+        self.message = message
+        super().__init__(self.status_code, self.message)
+
+
+class ServerDown(Exception):
+    def __init__(self, code=504, message="The server is unavailable."):
+        self.status_code = code
+        self.message = message
+        super().__init__(self.message)
+
+
+class LockException(Exception):
+    def __init__(self, code=403, message="File deletion is locked"):
+        self.status_code = code
+        self.message = message
+        super().__init__(self.status_code, self.message)
+
+
+class SensitiveFile(Exception):
+    def __init__(self, code=403, message="This file is sensitive"):
+        self.status_code = code
+        self.message = message
+        super().__init__(self.status_code, self.message)
+
