@@ -1,7 +1,7 @@
-from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, TooManyRequests, RequestTimeout, ServerDown
+from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, DuplicatedFile, CorruptedFile, LockException, \
+    SensitiveFile
+from exceptions import TooManyRequests, RequestTimeout, ServerDown
 from randomNumber import RandomNumberGenerator
-from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, DuplicatedFile, CorruptedFile, LockException
-
 
 
 class Cloud:
@@ -36,10 +36,10 @@ class Cloud:
 
         if not self.is_valid_format(folder_name, file):
             raise FilenameInvalid(f"Invalid filename '{file}' for folder '{folder_name}'")
-        
+
         if file_size > self.filesize_limit_upload:
             raise TooLargeFile()
-            
+
         try:
             RandomNumberGenerator.generate_and_check()
         except TooManyRequests as e:
@@ -60,11 +60,10 @@ class Cloud:
             raise CorruptedFile(f"File '{file}' is corrupted")
         self.folders[folder_name]['files'][file] = {'size': file_size}
 
-
     def read_file(self, folder_name, filename):
         pass
 
-    def download_file(self, folder_name, filename):
+    def download_file(self, folder_name, file):
         try:
             RandomNumberGenerator.generate_and_check()
         except TooManyRequests as e:
@@ -73,6 +72,9 @@ class Cloud:
             print(f"Erreur Request Timeout : {e}")
         except ServerDown as e:
             print(f"Erreur ServerDown : {e}")
+
+        if not self.is_sensitive_file(folder_name, file):
+            raise SensitiveFile()
 
     def delete_file(self, folder_name, filename):
         if not self.is_valid_path(folder_name):
@@ -97,6 +99,14 @@ class Cloud:
     def is_valid_path(self, folder_name):
         folder = self.folders.get(folder_name)
         return folder
+
+    def is_sensitive_file(self, folder_name, file, state=True):
+        folder = self.folders.get(folder_name).get('format', [])
+        if not folder:
+            raise NotAuthorized()
+        if not file:
+            raise FilenameInvalid()
+        return state
 
 
 def main():
