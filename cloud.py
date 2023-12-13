@@ -1,4 +1,5 @@
 from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, NotImplemented
+from randomNumber import RandomNumberGenerator
 
 
 class Cloud:
@@ -27,6 +28,8 @@ class Cloud:
         }
 
     def upload_file(self, folder_name, file, file_size):
+        RandomNumberGenerator.generate_and_check()
+
         if not self.is_valid_path(folder_name):
             raise NotAuthorized()
 
@@ -37,14 +40,20 @@ class Cloud:
             raise TooLargeFile()
 
     def read_file(self, folder_name, filename):
+        RandomNumberGenerator.generate_and_check()
+
         if not self.is_implemented:
             raise NotImplemented()
 
     def download_file(self, folder_name, filename):
+        RandomNumberGenerator.generate_and_check()
+
         if not self.is_implemented:
             raise NotImplemented()
 
     def delete_file(self, folder_name, filename):
+        RandomNumberGenerator.generate_and_check()
+        
         if not self.is_implemented:
             raise NotImplemented()
 

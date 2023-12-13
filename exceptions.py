@@ -23,3 +23,8 @@ class NotImplemented(Exception):
         self.message = message
         super().__init__(self.status_code, self.message)
 
+class ServerError(Exception):
+    def __init__(self, code=500, message="Internal Server Error"):
+        self.status_code = code
+        self.message = message
+        super().__init__(self.status_code, self.message)
