@@ -6,7 +6,8 @@ public class Ui {
 1. Upload File
 2. Download File
 3. List Files
-4. Exit
+4. Delete file
+5. Exit
                 """;
         System.out.println(menu);
         System.out.print("Select an option: ");
