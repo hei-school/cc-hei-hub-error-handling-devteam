@@ -1,4 +1,4 @@
-from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, NotImplemented
+from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, NotImplemented,ServerError
 from randomNumber import RandomNumberGenerator
 
 
@@ -7,7 +7,6 @@ class Cloud:
         self.cloud_name = cloud_name
         self.filesize_limit_upload = 10  # MB UNIT
         self.folder_size_limit = 10000  # MB UNIT
-        self.is_implemented = False
         self.folders = {
             'images': {
                 'files': {},
@@ -28,7 +27,6 @@ class Cloud:
         }
 
     def upload_file(self, folder_name, file, file_size):
-        RandomNumberGenerator.generate_and_check()
 
         if not self.is_valid_path(folder_name):
             raise NotAuthorized()
@@ -39,24 +37,37 @@ class Cloud:
         if file_size > self.filesize_limit_upload:
             raise TooLargeFile()
 
-    def read_file(self, folder_name, filename):
-        RandomNumberGenerator.generate_and_check()
+        try:
+            RandomNumberGenerator.generate_and_check()
+        except NotImplemented as e:
+            print(f"Error : {e}")
+        except ServerError as e:
+            print(f"Error : {e}")
 
-        if not self.is_implemented:
-            raise NotImplemented()
+    def read_file(self, folder_name, filename):
+        try:
+            RandomNumberGenerator.generate_and_check()
+        except NotImplemented as e:
+            print(f"Error : {e}")
+        except ServerError as e:
+            print(f"Error : {e}")
 
     def download_file(self, folder_name, filename):
-        RandomNumberGenerator.generate_and_check()
-
-        if not self.is_implemented:
-            raise NotImplemented()
+        try:
+            RandomNumberGenerator.generate_and_check()
+        except NotImplemented as e:
+            print(f"Error : {e}")
+        except ServerError as e:
+            print(f"Error : {e}")
 
     def delete_file(self, folder_name, filename):
-        RandomNumberGenerator.generate_and_check()
+        try:
+            RandomNumberGenerator.generate_and_check()
+        except NotImplemented as e:
+            print(f"Error : {e}")
+        except ServerError as e:
+            print(f"Error : {e}")
         
-        if not self.is_implemented:
-            raise NotImplemented()
-
     def is_valid_format(self, folder_name, file):
         folder = self.folders.get(folder_name).get('format', [])
         file_format = file.split('.')[-1].lower()
