@@ -16,3 +16,10 @@ class TooLargeFile(Exception):
         self.status_code = code
         self.message = message
         super().__init__(self.status_code, self.message)
+
+class NotImplemented(Exception):
+    def __init__(self, code=501, message="This operation is not implemented"):
+        self.status_code = code
+        self.message = message
+        super().__init__(self.status_code, self.message)
+

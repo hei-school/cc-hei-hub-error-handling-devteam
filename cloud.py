@@ -1,4 +1,4 @@
-from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile
+from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, NotImplemented
 
 
 class Cloud:
@@ -6,6 +6,7 @@ class Cloud:
         self.cloud_name = cloud_name
         self.filesize_limit_upload = 10  # MB UNIT
         self.folder_size_limit = 10000  # MB UNIT
+        self.is_implemented = False
         self.folders = {
             'images': {
                 'files': {},
@@ -36,13 +37,16 @@ class Cloud:
             raise TooLargeFile()
 
     def read_file(self, folder_name, filename):
-        pass
+        if not self.is_implemented:
+            raise NotImplemented()
 
     def download_file(self, folder_name, filename):
-        pass
+        if not self.is_implemented:
+            raise NotImplemented()
 
     def delete_file(self, folder_name, filename):
-        pass
+        if not self.is_implemented:
+            raise NotImplemented()
 
     def is_valid_format(self, folder_name, file):
         folder = self.folders.get(folder_name).get('format', [])
