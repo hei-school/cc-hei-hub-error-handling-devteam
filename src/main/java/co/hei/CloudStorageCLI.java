@@ -1,6 +1,10 @@
 package co.hei;
 
 
+
+import co.hei.exceptions.*;
+import co.hei.utilities.RandomNumberGenerator;
+
 import co.hei.exceptions.CorruptedFileException;
 import co.hei.exceptions.DuplicateFileException;
 import co.hei.exceptions.InsufficientSpaceDiskException;
@@ -97,19 +101,30 @@ class CloudStorageCLI {
         String fileName = scanner.nextLine();
 
         try {
+
+            RandomNumberGenerator.generateAndCheck();
+
             if (fileName.toLowerCase().contains("corrupt")) {
                 throw new CorruptedFileException("it is a corrupted file");
             }
+
             validateFile(filePath, selectedFolder, fileTypeChoice);
             RandomNumber.generateAndCheck();
             selectedFolder.put(fileName, filePath);
             System.out.println("File uploaded successfully!");
+
+        } catch (NotImplementedException e){
+            System.out.println("Error : "+ e.getMessage());
+        } catch (ServerErrorException e){
+            System.out.println("Error :"+ e.getMessage());
+
         } catch (TooManyRequestsException e) {
             System.out.println("Error TooManyRequests: " + e.getMessage());
         } catch (RequestTimeOutException e) {
             System.out.println("Error RequestTimeout: " + e.getMessage());
         } catch (ServerDownException e) {
             System.out.println("Error ServerDown: " + e.getMessage());
+
         } catch (Exception e) {
             Logger logger = Logger.getLogger("MyLog");
             logger.addHandler(fileHandler);
@@ -129,7 +144,11 @@ class CloudStorageCLI {
         String fileName = scanner.nextLine();
 
         try {
+
+            RandomNumberGenerator.generateAndCheck();
+
             RandomNumber.generateAndCheck();
+
 
             if (selectedFolder.containsKey(fileName)) {
                 String filePath = selectedFolder.get(fileName);
@@ -137,6 +156,12 @@ class CloudStorageCLI {
             } else {
                 System.out.println("Error: File not found.");
             }
+
+        }catch (NotImplementedException e){
+            System.out.println("Error : "+ e.getMessage());
+        }catch (ServerErrorException e){
+            System.out.println("Error :"+ e.getMessage());
+
         } catch (TooManyRequestsException e) {
             System.out.println("Error TooManyRequests: " + e.getMessage());
         } catch (RequestTimeOutException e) {
@@ -148,6 +173,7 @@ class CloudStorageCLI {
             logger.addHandler(fileHandler);
             logger.info(e.toString());
             System.out.println("Error: " + e.getMessage());
+
         }
 
     }
