@@ -1,12 +1,15 @@
 package co.hei;
 
 
+import co.hei.exceptions.RequestTimeOutException;
+import co.hei.exceptions.ServerDownException;
+import co.hei.exceptions.TooManyRequestsException;
 import co.hei.exceptions.DuplicateFileException;
 import co.hei.exceptions.InsufficientSpaceDiskException;
 import co.hei.exceptions.NotFoundException;
 import co.hei.exceptions.TooLargeFileSizeException;
 import co.hei.utilities.Ui;
-
+import co.hei.utilities.RandomNumber;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,8 +69,18 @@ class CloudStorageCLI {
 
         try {
             validateFile(filePath, selectedFolder, fileTypeChoice);
+            RandomNumber.generateAndCheck();
             selectedFolder.put(fileName, filePath);
             System.out.println("File uploaded successfully!");
+
+        }catch (TooManyRequestsException e) {
+            System.out.println("Error TooManyRequests: " + e.getMessage());
+        } catch (RequestTimeOutException e) {
+            System.out.println("Error RequestTimeout: " + e.getMessage());
+        } catch (ServerDownException e) {
+            System.out.println("Error ServerDown: " + e.getMessage());
+        }catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("\n"+e);
         }
@@ -83,12 +96,25 @@ class CloudStorageCLI {
         System.out.print("Enter the file name: ");
         String fileName = scanner.nextLine();
 
-        if (selectedFolder.containsKey(fileName)) {
-            String filePath = selectedFolder.get(fileName);
-            System.out.println("Downloading file from: " + filePath);
-        } else {
-            System.out.println("Error: File not found.");
+        try{
+            RandomNumber.generateAndCheck();
+
+            if (selectedFolder.containsKey(fileName)) {
+                String filePath = selectedFolder.get(fileName);
+                System.out.println("Downloading file from: " + filePath);
+            } else {
+                System.out.println("Error: File not found.");
+            }
+        }catch (TooManyRequestsException e) {
+            System.out.println("Error TooManyRequests: " + e.getMessage());
+        } catch (RequestTimeOutException e) {
+            System.out.println("Error RequestTimeout: " + e.getMessage());
+        } catch (ServerDownException e) {
+            System.out.println("Error ServerDown: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
+
     }
 
     private static void listFiles() {
