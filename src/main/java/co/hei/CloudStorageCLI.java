@@ -81,8 +81,6 @@ class CloudStorageCLI {
             System.out.println("Error ServerDown: " + e.getMessage());
         }catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("\n"+e);
         }
     }
 
