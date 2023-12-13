@@ -38,10 +38,11 @@ Handle some error that may arise on these steps :
     - check :
         - too many request
         - request time out
+        - server down
 
 # Team Members: 
 
-- [ STD21001 - ]()
+- [ STD21001 - Fanjasoa ANDRIAMANJAKA](https://github.com/fanjasoa18)
 - [STD21052 - Amour Bien Aimé RAMANANTSIRESY](https://github.com/amourRamanantsiresy)
 - [ STD21081 - ]()
 - [ STD21102 - ]()
