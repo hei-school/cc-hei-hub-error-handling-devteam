@@ -25,6 +25,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+target
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
@@ -65,3 +66,4 @@ env/
 __pycache__/
 ### Mac OS ###
 .DS_Store
+logs.txt
