@@ -1,4 +1,5 @@
-from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile
+from exceptions import FilenameInvalid, NotAuthorized, TooLargeFile, TooManyRequests, RequestTimeout, ServerDown
+from randomNumber import RandomNumberGenerator
 
 
 class Cloud:
@@ -6,6 +7,7 @@ class Cloud:
         self.cloud_name = cloud_name
         self.filesize_limit_upload = 10  # MB UNIT
         self.folder_size_limit = 10000  # MB UNIT
+        self.randomNumber = RandomNumberGenerator()
         self.folders = {
             'images': {
                 'files': {},
@@ -35,11 +37,27 @@ class Cloud:
         if file_size > self.filesize_limit_upload:
             raise TooLargeFile()
 
+        try:
+            RandomNumberGenerator.generate_and_check()
+        except TooManyRequests as e:
+            print(f"Erreur TooManyRequests : {e}")
+        except RequestTimeout as e:
+            print(f"Erreur Request Timeout : {e}")
+        except ServerDown as e:
+            print(f"Erreur ServerDown : {e}")
+
     def read_file(self, folder_name, filename):
         pass
 
     def download_file(self, folder_name, filename):
-        pass
+        try:
+            RandomNumberGenerator.generate_and_check()
+        except TooManyRequests as e:
+            print(f"Erreur TooManyRequests : {e}")
+        except RequestTimeout as e:
+            print(f"Erreur Request Timeout : {e}")
+        except ServerDown as e:
+            print(f"Erreur ServerDown : {e}")
 
     def delete_file(self, folder_name, filename):
         pass
@@ -52,7 +70,7 @@ class Cloud:
     def is_valid_path(self, folder_name):
         folder = self.folders.get(folder_name)
         return folder
-    
+
 
 def main():
     hei_cloud = Cloud("HeiCloud")
