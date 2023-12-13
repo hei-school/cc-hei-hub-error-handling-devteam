@@ -5,6 +5,7 @@ import co.hei.exceptions.DuplicateFileException;
 import co.hei.exceptions.InsufficientSpaceDiskException;
 import co.hei.exceptions.NotFoundException;
 import co.hei.exceptions.TooLargeFileSizeException;
+import co.hei.utilities.RandomNumberGenerator;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -73,6 +74,7 @@ class CloudStorageCLI {
         String fileName = scanner.nextLine();
 
         try {
+            RandomNumberGenerator.generateAndCheck();
             validateFile(filePath, selectedFolder, fileTypeChoice);
             selectedFolder.put(fileName, filePath);
             System.out.println("File uploaded successfully!");
