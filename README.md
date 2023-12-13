@@ -2,6 +2,9 @@
 
 # Cloud Storage CLI in Java
 
+As the readme in the main branch [main](https://github.com/hei-school/cc-hei-hub-error-handling-devteam/tree/main), this is a Cloud Storage emulator programmed by java. It has all property that is specified there.
+But here, all error logs are saved in a file `src/logs.txt`. 
+
 # Requirements :
 
 To be able to run this project you will need Java and Maven.
