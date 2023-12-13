@@ -35,5 +35,5 @@ To install them you can view the following docs :
 ```
 6. Run project
 ```sh
-    java -jar errorHandling-1.0-SNAPSHOT.jar
+    java -jar target/errorHandling-1.0-SNAPSHOT.jar
 ```
