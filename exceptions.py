@@ -16,3 +16,20 @@ class TooLargeFile(Exception):
         self.status_code = code
         self.message = message
         super().__init__(self.status_code, self.message)
+
+class DuplicatedFile(Exception):
+    def __init__(self, message="Duplicated file"):
+        self.message = message
+        super().__init__(self.message)
+
+class CorruptedFile(Exception):
+    def __init__(self, code=500, message="The file is corrupted"):
+        self.status_code = code
+        self.message = message
+        super().__init__(self.status_code, self.message)
+
+class LockException(Exception):
+    def __init__(self, code=403, message="File deletion is locked"):
+        self.status_code = code
+        self.message = message
+        super().__init__(self.status_code, self.message)
