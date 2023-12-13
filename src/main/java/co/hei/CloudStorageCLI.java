@@ -1,8 +1,14 @@
 package co.hei;
 
 
-import co.hei.exceptions.*;
-
+import co.hei.exceptions.RequestTimeOutException;
+import co.hei.exceptions.ServerDownException;
+import co.hei.exceptions.TooManyRequestsException;
+import co.hei.exceptions.DuplicateFileException;
+import co.hei.exceptions.InsufficientSpaceDiskException;
+import co.hei.exceptions.NotFoundException;
+import co.hei.exceptions.TooLargeFileSizeException;
+import co.hei.utilities.Ui;
 import co.hei.utilities.RandomNumber;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,13 +32,9 @@ class CloudStorageCLI {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            System.out.println("1. Upload File");
-            System.out.println("2. Download File");
-            System.out.println("3. List Files");
-            System.out.println("4. Exit");
-            System.out.print("Select an option: ");
+            Ui.showMenu();
             int choice = scanner.nextInt();
-            scanner.nextLine();  // Consume the newline character
+            scanner.nextLine();
 
             switch (choice) {
                 case 1:
@@ -54,12 +56,7 @@ class CloudStorageCLI {
     }
 
     private static void uploadFile(Scanner scanner) {
-        System.out.println("Select file type to upload:");
-        System.out.println("1. Images");
-        System.out.println("2. Videos");
-        System.out.println("3. PDFs");
-        System.out.println("4. Docs");
-        System.out.print("Enter the type (1-4): ");
+        Ui.showFileTypes("upload");
         int fileTypeChoice = scanner.nextInt();
         scanner.nextLine();
 
@@ -75,6 +72,7 @@ class CloudStorageCLI {
             RandomNumber.generateAndCheck();
             selectedFolder.put(fileName, filePath);
             System.out.println("File uploaded successfully!");
+
         }catch (TooManyRequestsException e) {
             System.out.println("Error TooManyRequests: " + e.getMessage());
         } catch (RequestTimeOutException e) {
@@ -83,16 +81,13 @@ class CloudStorageCLI {
             System.out.println("Error ServerDown: " + e.getMessage());
         }catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("\n"+e);
         }
     }
 
     private static void downloadFile(Scanner scanner) {
-        System.out.println("Select file type to download:");
-        System.out.println("1. Images");
-        System.out.println("2. Videos");
-        System.out.println("3. PDFs");
-        System.out.println("4. Docs");
-        System.out.print("Enter the type (1-4): ");
+        Ui.showFileTypes("download");
         int fileTypeChoice = scanner.nextInt();
         scanner.nextLine();
 
