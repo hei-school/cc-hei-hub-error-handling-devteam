@@ -1,15 +1,18 @@
 package co.hei;
 
 
-import co.hei.exceptions.RequestTimeOutException;
-import co.hei.exceptions.ServerDownException;
-import co.hei.exceptions.TooManyRequestsException;
+import co.hei.exceptions.CorruptedFileException;
 import co.hei.exceptions.DuplicateFileException;
 import co.hei.exceptions.InsufficientSpaceDiskException;
+import co.hei.exceptions.LockException;
 import co.hei.exceptions.NotFoundException;
+import co.hei.exceptions.RequestTimeOutException;
+import co.hei.exceptions.ServerDownException;
 import co.hei.exceptions.TooLargeFileSizeException;
-import co.hei.utilities.Ui;
+import co.hei.exceptions.TooManyRequestsException;
 import co.hei.utilities.RandomNumber;
+import co.hei.utilities.Ui;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +33,6 @@ class CloudStorageCLI {
 
     public static void handler() {
         Scanner scanner = new Scanner(System.in);
-
         while (true) {
             Ui.showMenu();
             int choice = scanner.nextInt();
@@ -47,6 +49,9 @@ class CloudStorageCLI {
                     listFiles();
                     break;
                 case 4:
+                    deleteFile(scanner);
+                    break;
+                case 5:
                     System.out.println("Exiting...");
                     System.exit(0);
                 default:
@@ -68,18 +73,20 @@ class CloudStorageCLI {
         String fileName = scanner.nextLine();
 
         try {
+            if (fileName.toLowerCase().contains("corrupt")) {
+                throw new CorruptedFileException("it is a corrupted file");
+            }
             validateFile(filePath, selectedFolder, fileTypeChoice);
             RandomNumber.generateAndCheck();
             selectedFolder.put(fileName, filePath);
             System.out.println("File uploaded successfully!");
-
-        }catch (TooManyRequestsException e) {
+        } catch (TooManyRequestsException e) {
             System.out.println("Error TooManyRequests: " + e.getMessage());
         } catch (RequestTimeOutException e) {
             System.out.println("Error RequestTimeout: " + e.getMessage());
         } catch (ServerDownException e) {
             System.out.println("Error ServerDown: " + e.getMessage());
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
@@ -94,7 +101,7 @@ class CloudStorageCLI {
         System.out.print("Enter the file name: ");
         String fileName = scanner.nextLine();
 
-        try{
+        try {
             RandomNumber.generateAndCheck();
 
             if (selectedFolder.containsKey(fileName)) {
@@ -103,7 +110,7 @@ class CloudStorageCLI {
             } else {
                 System.out.println("Error: File not found.");
             }
-        }catch (TooManyRequestsException e) {
+        } catch (TooManyRequestsException e) {
             System.out.println("Error TooManyRequests: " + e.getMessage());
         } catch (RequestTimeOutException e) {
             System.out.println("Error RequestTimeout: " + e.getMessage());
@@ -132,8 +139,8 @@ class CloudStorageCLI {
         }
     }
 
-    private static void validateFile(String filePath, Map<String, String> selectedFolder, int fileType)
-            throws IOException, NotFoundException, TooLargeFileSizeException, InsufficientSpaceDiskException, DuplicateFileException {
+
+    private static void validateFile(String filePath, Map<String, String> selectedFolder, int fileType) throws IOException, NotFoundException, TooLargeFileSizeException, InsufficientSpaceDiskException, DuplicateFileException {
         Path file = Paths.get(filePath);
 
         if (!Files.exists(file)) {
@@ -159,6 +166,36 @@ class CloudStorageCLI {
         }
 
         currentStorageSize += (int) fileSize;
+    }
+
+    private static void deleteFile(Scanner scanner) {
+        Ui.showFileTypes("delete");
+        int fileTypeChoice = scanner.nextInt();
+        scanner.nextLine();
+
+        Map<String, String> selectedFolder = getFolderByType(fileTypeChoice);
+
+        System.out.print("Enter the file name: ");
+        String fileName = scanner.nextLine();
+
+        try {
+            validateDelete(selectedFolder, fileName);
+            selectedFolder.remove(fileName);
+            System.out.println("File deleted successfully!");
+        } catch (LockException e) {
+            System.out.println("\n" + e);
+        } catch (NotFoundException e) {
+            System.out.println("\n" + e);
+        }
+    }
+
+
+    private static void validateDelete(Map<String, String> selectedFolder, String fileName) throws NotFoundException, LockException {
+        if (!selectedFolder.containsKey(fileName)) {
+            throw new NotFoundException("Error: File not found.");
+        }
+
+        throw new LockException("Error: Deletion is locked.");
     }
 
     private static Map<String, String> getFolderByType(int fileTypeChoice) {
