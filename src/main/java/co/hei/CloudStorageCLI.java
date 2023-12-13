@@ -69,7 +69,7 @@ class CloudStorageCLI {
             selectedFolder.put(fileName, filePath);
             System.out.println("File uploaded successfully!");
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            System.out.println("\n"+e);
         }
     }
 
